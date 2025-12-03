@@ -12,6 +12,10 @@ class Config:
     # OpenAI
     OPENAI_API_KEY: str = os.environ.get("OPENAI_API_KEY", "")
     AI_MODEL: str = os.environ.get("AI_MODEL", "gpt-4o")
+    AI_MODEL_SEARCH: str = os.environ.get("AI_MODEL_SEARCH", "gpt-4o-search-preview")
+
+    # Web検索設定
+    WEB_SEARCH_ENABLED: bool = os.environ.get("WEB_SEARCH_ENABLED", "true").lower() == "true"
 
     # 会話履歴設定（直近の往復数）
     MAX_HISTORY_LENGTH: int = int(os.environ.get("MAX_HISTORY_LENGTH", "10"))
