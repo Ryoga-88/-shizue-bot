@@ -12,6 +12,7 @@ class MessageHandler(commands.Cog):
         self.bot = bot
         self.ai_client = OpenAIClient()
         self.history = ConversationHistory()
+        self._processing = set()  # 処理中のメッセージIDを追跡
 
     async def _get_recent_messages(self, channel: discord.TextChannel, before_message: discord.Message, limit: int = 3) -> str:
         """直近のメッセージを取得してコンテキストとして返す"""
@@ -56,6 +57,12 @@ class MessageHandler(commands.Cog):
         if not self._is_bot_mentioned(message):
             print(f"[DEBUG] Ignored: not mentioned")
             return
+
+        # 同じメッセージを2回処理しないようにする
+        if message.id in self._processing:
+            print("[DEBUG] Ignored: already processing")
+            return
+        self._processing.add(message.id)
 
         print(f"[DEBUG] Bot was mentioned! Processing...")
 
@@ -118,6 +125,9 @@ class MessageHandler(commands.Cog):
                 import traceback
                 print(f"Error processing message: {e}")
                 traceback.print_exc()
+            finally:
+                # 処理完了後、IDを削除（メモリリーク防止）
+                self._processing.discard(message.id)
 
     async def _send_response(self, message: discord.Message, response: str):
         """応答を送信（長い場合は分割）"""
