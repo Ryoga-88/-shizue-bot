@@ -13,6 +13,19 @@ class MessageHandler(commands.Cog):
         self.ai_client = OpenAIClient()
         self.history = ConversationHistory()
 
+    async def _get_recent_messages(self, channel: discord.TextChannel, before_message: discord.Message, limit: int = 3) -> str:
+        """直近のメッセージを取得してコンテキストとして返す"""
+        recent = []
+        async for msg in channel.history(limit=limit + 1, before=before_message):
+            if msg.id != before_message.id:
+                author_name = msg.author.display_name
+                recent.append(f"{author_name}: {msg.content}")
+
+        recent.reverse()  # 古い順に並べる
+        if recent:
+            return "【直前のチャンネルの会話】\n" + "\n".join(recent) + "\n\n【質問】\n"
+        return ""
+
     def _is_bot_mentioned(self, message: discord.Message) -> bool:
         """Botがメンションされているか確認（ユーザーメンション or ロールメンション）"""
         # ユーザーとして直接メンションされている
@@ -76,9 +89,15 @@ class MessageHandler(commands.Cog):
                     message.channel.id, message.author.id
                 )
 
+                # 直前3件のチャンネル会話を取得
+                recent_context = await self._get_recent_messages(message.channel, message, limit=3)
+
+                # ユーザーメッセージにコンテキストを追加
+                user_message = recent_context + (content or "この画像について説明してください")
+
                 # AIに問い合わせ
                 response = await self.ai_client.chat(
-                    user_message=content or "この画像について説明してください",
+                    user_message=user_message,
                     history=history,
                     image_urls=image_urls if image_urls else None,
                 )

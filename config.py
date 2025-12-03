@@ -13,8 +13,8 @@ class Config:
     OPENAI_API_KEY: str = os.environ.get("OPENAI_API_KEY", "")
     AI_MODEL: str = os.environ.get("AI_MODEL", "gpt-4o")
 
-    # 会話履歴設定（直近10メッセージまで保持）
-    MAX_HISTORY_LENGTH: int = int(os.environ.get("MAX_HISTORY_LENGTH", "20"))
+    # 会話履歴設定（直近の往復数）
+    MAX_HISTORY_LENGTH: int = int(os.environ.get("MAX_HISTORY_LENGTH", "10"))
 
     # システムプロンプト
     SYSTEM_PROMPT: str = """あなたは「しずえ」というキャラクターです。
