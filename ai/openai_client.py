@@ -56,15 +56,7 @@ class OpenAIClient:
                 model=self.model_search,
                 messages=messages,
                 max_tokens=2000,
-                web_search_options={
-                    "search_context_size": "medium",
-                    "user_location": {
-                        "type": "approximate",
-                        "approximate": {
-                            "country": "JP",
-                        }
-                    }
-                },
+                web_search_options={},
             )
         else:
             # 通常のリクエスト
