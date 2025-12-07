@@ -29,18 +29,10 @@ class MessageHandler(commands.Cog):
         return ""
 
     def _is_bot_mentioned(self, message: discord.Message) -> bool:
-        """Botがメンションされているか確認（ユーザーメンション or ロールメンション）"""
-        # ユーザーとして直接メンションされている
+        """Botがメンションされているか確認（ユーザーメンションのみ）"""
+        # ユーザーとして直接メンションされている場合のみ反応
         if self.bot.user and self.bot.user in message.mentions:
             return True
-
-        # Botが持っているロールがメンションされている
-        if message.guild:
-            bot_member = message.guild.get_member(self.bot.user.id)
-            if bot_member:
-                for role in message.role_mentions:
-                    if role in bot_member.roles:
-                        return True
 
         return False
 
