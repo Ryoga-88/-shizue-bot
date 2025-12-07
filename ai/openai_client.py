@@ -87,6 +87,10 @@ class OpenAIClient:
         if has_images:
             return False
 
+        # 短いメッセージ（挨拶など）は検索しない
+        if len(message) < 10:
+            return False
+
         # 検索が必要そうなキーワードをチェック
         search_keywords = [
             # 時事・ニュース系
